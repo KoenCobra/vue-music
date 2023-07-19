@@ -277,4 +277,8 @@ export default {
   <auth></auth>
 </template>
 
-<style scoped></style>
+<style>
+.submit-btn {
+  background: mediumpurple !important;
+}
+</style>
