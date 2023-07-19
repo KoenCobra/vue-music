@@ -7,6 +7,9 @@ export default {
     useModalStore,
     closeModal() {
       useModalStore().isOpen = false
+    },
+    register(values) {
+      console.log(values)
     }
   },
   data() {
@@ -16,7 +19,7 @@ export default {
         name: 'required|min:3|max:100|alpha_spaces',
         email: 'required|min:3|max:100|email',
         age: 'required|min_value:18|max_value:100',
-        password: 'required|min:3|max:100',
+        password: 'required|min:9|max:100|not_one_of:password',
         confirm_password: 'confirmed:@password',
         country: 'required|not_one_of:Antarctica',
         tos: 'required'
@@ -109,7 +112,7 @@ export default {
               </button>
             </form>
             <!-- Registration Form -->
-            <vee-form v-show="tab === 'register'" :validation-schema="schema">
+            <vee-form v-show="tab === 'register'" :validation-schema="schema" @submit="register">
               <!-- Name -->
               <div class="mb-3">
                 <label class="inline-block mb-2">Name</label>
@@ -145,12 +148,17 @@ export default {
               <!-- Password -->
               <div class="mb-3">
                 <label class="inline-block mb-2">Password</label>
-                <vee-field
-                  name="password"
-                  type="password"
-                  class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
-                  placeholder="Password"
-                />
+                <vee-field :bails="false" name="password" v-slot="{ field, errors }">
+                  <input
+                    class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
+                    placeholder="Password"
+                    type="password"
+                    v-bind="field"
+                  />
+                  <div v-for="error in errors" class="text-red-600" :key="error">
+                    {{ error }}
+                  </div>
+                </vee-field>
                 <error-message name="password" class="text-red-600" />
               </div>
               <!-- Confirm Password -->
