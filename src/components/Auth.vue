@@ -11,7 +11,16 @@ export default {
   },
   data() {
     return {
-      tab: 'login'
+      tab: 'login',
+      schema: {
+        name: 'required|min:3|max:100|alpha_spaces',
+        email: '',
+        age: '',
+        password: '',
+        confirm_password: '',
+        country: '',
+        tos: ''
+      }
     }
   }
 }
@@ -100,7 +109,7 @@ export default {
               </button>
             </form>
             <!-- Registration Form -->
-            <vee-form v-show="tab === 'register'">
+            <vee-form v-show="tab === 'register'" :validation-schema="schema">
               <!-- Name -->
               <div class="mb-3">
                 <label class="inline-block mb-2">Name</label>
@@ -110,6 +119,7 @@ export default {
                   class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                   placeholder="Enter Name"
                 />
+                <error-message name="name" class="text-red-600" />
               </div>
               <!-- Email -->
               <div class="mb-3">
@@ -164,7 +174,7 @@ export default {
               </div>
               <button
                 type="submit"
-                class="block w-full bg-purple-600 text-white py-1.5 px-3 rounded transition hover:bg-purple-700"
+                class="block w-full bg-purple-700 text-white py-1.5 px-3 rounded transition hover:bg-purple-700 submit-btn"
               >
                 Submit
               </button>
@@ -185,5 +195,9 @@ export default {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.submit-btn {
+  background: mediumpurple !important;
 }
 </style>

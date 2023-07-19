@@ -5,7 +5,6 @@ export default {
   methods: {
     toggleAuthModal() {
       useModalStore().isOpen = !useModalStore().isOpen
-      console.log(useModalStore().isOpen)
     }
   }
 }
