@@ -23,6 +23,7 @@ a:hover {
   animation: slide 50s linear infinite;
   will-change: background-position;
   z-index: -1;
+  background-image: url("header.png");
 }
 
 #playlist li:first-child {
