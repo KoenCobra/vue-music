@@ -1,4 +1,8 @@
-﻿<script></script>
+﻿<script>
+export default {
+  name: 'AppHeader'
+}
+</script>
 
 <template>
   <header id="header" class="bg-gray-700">
