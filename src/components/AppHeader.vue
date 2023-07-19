@@ -1,6 +1,13 @@
 ﻿<script>
+import { useModalStore } from '@/stores/modalStore'
 export default {
-  name: 'AppHeader'
+  name: 'AppHeader',
+  methods: {
+    toggleAuthModal() {
+      useModalStore().isOpen = !useModalStore().isOpen
+      console.log(useModalStore().isOpen)
+    }
+  }
 }
 </script>
 
@@ -15,7 +22,9 @@ export default {
         <ul class="flex flex-row mt-1">
           <!-- Navigation Links -->
           <li>
-            <a class="px-2 text-white" href="#">Login / Register</a>
+            <a @click.prevent="toggleAuthModal" class="px-2 text-white" href="#"
+              >Login / Register</a
+            >
           </li>
           <li>
             <a class="px-2 text-white" href="#">Manage</a>

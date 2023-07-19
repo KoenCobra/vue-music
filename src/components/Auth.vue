@@ -1,11 +1,18 @@
 ﻿<script>
+import { useModalStore } from '@/stores/modalStore'
+
 export default {
-  name: 'Auth'
+  name: 'Auth',
+  computed: {
+    hiddenClass() {
+      return useModalStore().hiddenClass
+    }
+  }
 }
 </script>
 
 <template>
-  <div class="fixed z-10 inset-0 overflow-y-auto hidden" id="modal">
+  <div :class="hiddenClass" class="fixed z-10 inset-0 overflow-y-auto" id="modal">
     <div
       class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
     >
