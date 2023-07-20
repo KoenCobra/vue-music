@@ -1,12 +1,17 @@
 ﻿<script>
 import { useModalStore } from '@/stores/modalStore'
 import { useUserStore } from '@/stores/userStore'
+import router from '@/router'
 export default {
   name: 'AppHeader',
   methods: {
     useUserStore,
     toggleAuthModal() {
       useModalStore().isOpen = !useModalStore().isOpen
+    },
+    signOut() {
+      useUserStore().signOut()
+      if (this.$route.meta.requiresAuth) router.push({ name: 'home' })
     }
   }
 }
@@ -40,9 +45,7 @@ export default {
               <router-link class="px-2 text-white" :to="{ name: 'manage' }">Manage</router-link>
             </li>
             <li>
-              <a @click.prevent="useUserStore().signOut()" class="px-2 text-white" href="#"
-                >logout</a
-              >
+              <a @click.prevent="signOut" class="px-2 text-white" href="#">logout</a>
             </li>
           </template>
         </ul>

@@ -1,4 +1,6 @@
 ﻿<script>
+import { useUserStore } from '@/stores/userStore'
+
 export default {
   name: 'Manage'
 }
