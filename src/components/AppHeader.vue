@@ -1,8 +1,10 @@
 ﻿<script>
 import { useModalStore } from '@/stores/modalStore'
+import { useUserStore } from '@/stores/userStore'
 export default {
   name: 'AppHeader',
   methods: {
+    useUserStore,
     toggleAuthModal() {
       useModalStore().isOpen = !useModalStore().isOpen
     }
@@ -20,14 +22,21 @@ export default {
         <!-- Primary Navigation -->
         <ul class="flex flex-row mt-1">
           <!-- Navigation Links -->
-          <li>
+          <li v-if="!useUserStore().userLoggedIn">
             <a @click.prevent="toggleAuthModal" class="px-2 text-white" href="#"
               >Login / Register</a
             >
           </li>
-          <li>
-            <a class="px-2 text-white" href="#">Manage</a>
-          </li>
+          <template v-else>
+            <li>
+              <a class="px-2 text-white" href="#">Manage</a>
+            </li>
+            <li>
+              <a @click.prevent="useUserStore().signOut()" class="px-2 text-white" href="#"
+                >logout</a
+              >
+            </li>
+          </template>
         </ul>
       </div>
     </nav>
