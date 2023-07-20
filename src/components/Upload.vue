@@ -1,13 +1,65 @@
 ﻿<script>
+import { storage, auth, songsCollection } from '@/includes/firebase'
+
 export default {
   name: 'Upload',
   data() {
     return {
-      isDragOver: false
+      isDragOver: false,
+      uploads: []
     }
   },
   methods: {
-    upload() {
+    upload(event) {
+      const files = [...event.dataTransfer.files]
+      files.forEach((file) => {
+        if (file.type !== 'audio/mpeg') {
+          return
+        }
+        const storageRef = storage.ref()
+        const songsRef = storageRef.child(`songs/${file.name}`)
+        const task = songsRef.put(file)
+
+        const uploadIndex =
+          this.uploads.push({
+            task,
+            currentProgress: 0,
+            name: file.name,
+            variant: 'bg-blue-400',
+            icon: 'fas fa-spinner fa-spin',
+            textClass: ''
+          }) - 1
+
+        task.on(
+          'state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            this.uploads[uploadIndex].currentProgress = progress
+          },
+          () => {
+            this.uploads[uploadIndex].variant = 'bg-red-400'
+            this.uploads[uploadIndex].icon = 'fas fa-times'
+            this.uploads[uploadIndex].textClass = 'text-red-400'
+          },
+          async () => {
+            const song = {
+              uid: auth.currentUser.uid,
+              displayName: auth.currentUser.displayName,
+              originalName: task.snapshot.ref.name,
+              modifiedName: task.snapshot.ref.name,
+              genre: '',
+              commentCount: 0
+            }
+
+            song.url = await task.snapshot.ref.getDownloadURL()
+
+            await songsCollection.add(song)
+            this.uploads[uploadIndex].variant = 'bg-green-400'
+            this.uploads[uploadIndex].icon = 'fas fa-check'
+            this.uploads[uploadIndex].textClass = ''
+          }
+        )
+      })
       this.isDragOver = false
     }
   }
@@ -31,30 +83,25 @@ export default {
         @dragover.prevent.stop="isDragOver = true"
         @dragenter.prevent.stop="isDragOver = true"
         @dragleave.prevent.stop="isDragOver = false"
-        @drop.prevent.stop="upload"
+        @drop.prevent.stop="upload($event)"
       >
         <h5>Drop your files here</h5>
       </div>
       <hr class="my-6" />
       <!-- Progess Bars -->
-      <div class="mb-4">
+      <div v-for="upload in uploads" :key="upload.name" class="mb-4">
         <!-- File Name -->
-        <div class="font-bold text-sm">Just another song.mp3</div>
+        <div class="font-bold text-sm" :class="upload.text">
+          <i :class="upload.icon"></i>
+          {{ upload.name }}
+        </div>
         <div class="flex h-4 overflow-hidden bg-gray-200 rounded">
           <!-- Inner Progress Bar -->
-          <div class="transition-all progress-bar bg-blue-400" style="width: 75%"></div>
-        </div>
-      </div>
-      <div class="mb-4">
-        <div class="font-bold text-sm">Just another song.mp3</div>
-        <div class="flex h-4 overflow-hidden bg-gray-200 rounded">
-          <div class="transition-all progress-bar bg-blue-400" style="width: 35%"></div>
-        </div>
-      </div>
-      <div class="mb-4">
-        <div class="font-bold text-sm">Just another song.mp3</div>
-        <div class="flex h-4 overflow-hidden bg-gray-200 rounded">
-          <div class="transition-all progress-bar bg-blue-400" style="width: 55%"></div>
+          <div
+            class="transition-all progress-bar"
+            :class="upload.variant"
+            :style="{ width: upload.currentProgress + '%' }"
+          ></div>
         </div>
       </div>
     </div>
