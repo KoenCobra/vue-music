@@ -1,10 +1,17 @@
 <script>
 import AppHeader from '@/components/AppHeader.vue'
 import Auth from '@/components/Auth.vue'
+import { useUserStore } from '@/stores/userStore'
+import { auth } from '@/includes/firebase'
 
 export default {
   name: 'App',
-  components: { Auth, AppHeader }
+  components: { Auth, AppHeader },
+  created() {
+    if (auth.currentUser) {
+      useUserStore().userLoggedIn = true
+    }
+  }
 }
 </script>
 

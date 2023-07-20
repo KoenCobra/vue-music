@@ -1,5 +1,6 @@
 ﻿<script>
-import { auth } from '@/includes/firebase'
+import { useUserStore } from '@/stores/userStore'
+import { mapActions } from 'pinia'
 
 export default {
   name: 'registerForm',
@@ -16,7 +17,8 @@ export default {
         tos: 'tos'
       },
       userData: {
-        country: 'USA'
+        country: 'USA',
+        userType: 'Listener'
       },
       reg_in_submission: false,
       reg_show_alert: false,
@@ -31,9 +33,8 @@ export default {
       this.reg_alert_variant = 'bg-blue-500'
       this.reg_alert_message = 'please wait! Your account is being created'
 
-      let userCredentials
       try {
-        userCredentials = await auth.createUserWithEmailAndPassword(values.email, values.password)
+        await useUserStore().register(values)
       } catch (error) {
         this.reg_in_submission = false
         this.reg_alert_variant = 'bg-red-500'
@@ -43,7 +44,6 @@ export default {
 
       this.reg_alert_variant = 'bg-green-500'
       this.reg_alert_message = 'Success! Your account has been created'
-      console.log(userCredentials)
     }
   }
 }
@@ -130,6 +130,19 @@ export default {
         <option value="Antarctica">Antarctica</option>
       </vee-field>
       <error-message name="country" class="text-red-600" />
+    </div>
+
+    <div class="mb-3">
+      <label class="inline-block mb-2">What kind of user are you?</label>
+      <vee-field
+        as="select"
+        name="userType"
+        class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
+      >
+        <option value="Listener">Listener</option>
+        <option value="Artist">Artist</option>
+      </vee-field>
+      <error-message name="userType" class="text-red-600" />
     </div>
     <!-- TOS -->
     <div class="mb-3 pl-6">
