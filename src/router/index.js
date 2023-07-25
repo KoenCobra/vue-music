@@ -3,6 +3,7 @@ import HomeView from '@/views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'
 import Manage from '@/views/Manage.vue'
 import { useUserStore } from '@/stores/userStore'
+import Song from '@/components/Song.vue'
 
 const routes = [
   {

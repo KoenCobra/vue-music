@@ -59,6 +59,7 @@ input[type="file"] {
 .music-bg {
   animation: slide 50s linear infinite;
   will-change: background-position;
+  background-image: url(../assets/song-header.png);
 }
 
 @keyframes progress-bar-stripes {
