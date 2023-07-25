@@ -1,6 +1,7 @@
 ﻿<script>
 import { songsCollection, auth, commentsCollection } from '@/includes/firebase'
 import { useUserStore } from '@/stores/userStore'
+import { usePlayerStore } from '@/stores/player'
 
 export default {
   name: 'Song',
@@ -43,6 +44,7 @@ export default {
     await this.getComments()
   },
   methods: {
+    usePlayerStore,
     async getComments() {
       const snapshots = await commentsCollection.where('sid', '==', this.$route.params.id).get()
 
@@ -108,6 +110,7 @@ export default {
     <div class="container mx-auto flex items-center">
       <!-- Play/Pause Button -->
       <button
+        @click.prevent="usePlayerStore().newSong(song)"
         type="button"
         class="z-50 h-24 w-24 text-3xl bg-white text-black rounded-full focus:outline-none"
       >
