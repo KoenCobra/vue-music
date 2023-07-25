@@ -32,4 +32,8 @@ export default {
   background-color: steelblue !important;
   margin-left: 1rem;
 }
+
+.play-btn {
+  background-color: white !important;
+}
 </style>
