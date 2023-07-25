@@ -5,7 +5,14 @@ export default {
   name: 'Song',
   data() {
     return {
-      song: {}
+      song: {},
+      schema: {
+        comment: 'required|min:3'
+      },
+      in_submission: false,
+      show_alert: false,
+      alert_variant: 'bg-blue-500',
+      alert_message: 'Please wait! Updating song info'
     }
   },
   async created() {
@@ -15,6 +22,14 @@ export default {
       return
     }
     this.song = docSnapshot.data()
+  },
+  methods: {
+    async addComment(values) {
+      this.in_submission = true
+      this.show_alert = true
+      this.alert_variant = 'bg-blue-500'
+      this.alert_message = 'Please wait! Updating song info'
+    }
   }
 }
 </script>
@@ -47,15 +62,29 @@ export default {
         <i class="fa fa-comments float-right text-green-400 text-2xl"></i>
       </div>
       <div class="p-6">
-        <form>
-          <textarea
+        <div
+          class="text-white text-center font-bold p-4 mb-4"
+          v-if="show_alert"
+          :class="alert_variant"
+        >
+          {{ alert_message }}
+        </div>
+        <vee-form :validation-schema="schema" @submit="addComment">
+          <vee-field
+            as="textarea"
+            name="comment"
             class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded mb-4"
             placeholder="Your comment here..."
-          ></textarea>
-          <button type="submit" class="py-1.5 px-3 rounded text-white bg-green-600 block">
+          ></vee-field>
+          <error-message name="comment" class="text-red-500" />
+          <button
+            :disabled="in_submission"
+            type="submit"
+            class="py-1.5 px-3 rounded text-white bg-green-600 block"
+          >
             Submit
           </button>
-        </form>
+        </vee-form>
         <!-- Sort Comments -->
         <select
           class="block mt-4 py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
