@@ -34,6 +34,11 @@ export default {
       this.$router.push({ name: 'home' })
       return
     }
+
+    const { sort } = this.$route.query
+
+    this.sort = sort === '1' || sort === '2' ? sort : '1'
+
     this.song = docSnapshot.data()
     await this.getComments()
   },
@@ -74,6 +79,18 @@ export default {
       this.alert_message = 'Comment added!'
 
       resetForm()
+    }
+  },
+  watch: {
+    sort(newVal) {
+      if (newVal === this.$route.query.sort) {
+        return
+      }
+      this.$router.push({
+        query: {
+          sort: newVal
+        }
+      })
     }
   }
 }
