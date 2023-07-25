@@ -57,4 +57,9 @@ export default {
 .submit-btn {
   background: mediumpurple !important;
 }
+
+.back-btn {
+  background-color: steelblue !important;
+  margin-left: 1rem;
+}
 </style>
