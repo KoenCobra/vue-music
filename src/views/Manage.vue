@@ -1,41 +1,9 @@
-﻿<script>
-import Upload from '@/components/Upload.vue'
-import { songsCollection, auth } from '@/includes/firebase'
-import CompositionItem from '@/components/CompositionItem.vue'
-
-export default {
-  name: 'Manage',
-  data() {
-    return {
-      songs: []
-    }
-  },
-  components: { CompositionItem, Upload },
-  async created() {
-    const snapshot = await songsCollection.where('uid', '==', auth.currentUser.uid).get()
-    snapshot.forEach((document) => {
-      const song = {
-        ...document.data(),
-        docID: document.id
-      }
-
-      this.songs.push(song)
-    })
-  },
-  methods: {
-    updateSong(i, values) {
-      this.songs[i].modified_name = values.modified_name
-      this.songs[i].genre = values.genre
-    }
-  }
-}
-</script>
-
-<template>
+﻿<template>
+  <!-- Main Content -->
   <section class="container mx-auto mt-6">
     <div class="md:grid md:grid-cols-3 md:gap-4">
       <div class="col-span-1">
-        <upload ref="upload"></upload>
+        <app-upload ref="upload" :addSong="addSong" />
       </div>
       <div class="col-span-2">
         <div class="bg-white rounded border border-gray-200 relative flex flex-col">
@@ -46,11 +14,13 @@ export default {
           <div class="p-6">
             <!-- Composition Items -->
             <composition-item
-              :updateSong="updateSong"
-              :song="song"
               v-for="(song, i) in songs"
               :key="song.docID"
+              :song="song"
+              :updateSong="updateSong"
               :index="i"
+              :removeSong="removeSong"
+              :updateUnsavedFlag="updateUnsavedFlag"
             />
           </div>
         </div>
@@ -59,4 +29,69 @@ export default {
   </section>
 </template>
 
-<style scoped></style>
+<script>
+import AppUpload from '@/components/Upload.vue'
+import { songsCollection, auth } from '@/includes/firebase'
+import CompositionItem from '@/components/CompositionItem.vue'
+
+export default {
+  name: 'Manage',
+  components: {
+    AppUpload,
+    CompositionItem
+  },
+  data() {
+    return {
+      songs: [],
+      unsavedFlag: false
+    }
+  },
+  async created() {
+    const snapshot = await songsCollection.where('uid', '==', auth.currentUser.uid).get()
+
+    snapshot.forEach(this.addSong)
+  },
+  methods: {
+    updateSong(i, values) {
+      this.songs[i].modified_name = values.modified_name
+      this.songs[i].genre = values.genre
+    },
+    removeSong(i) {
+      this.songs.splice(i, 1)
+    },
+    addSong(document) {
+      const song = {
+        ...document.data(),
+        docID: document.id
+      }
+
+      this.songs.push(song)
+    },
+    updateUnsavedFlag(value) {
+      this.unsavedFlag = value
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (!this.unsavedFlag) {
+      next()
+    } else {
+      // eslint-disable-next-line no-alert, no-restricted-globals
+      const leave = confirm('You have unsaved changes. Are you sure you want to leave?')
+      next(leave)
+    }
+  }
+  // beforeRouteLeave(to, from, next) {
+  //   this.$refs.upload.cancelUploads();
+  //   next();
+  // },
+  // beforeRouteEnter(to, from, next) {
+  //   const store = useUserStore();
+
+  //   if (store.userLoggedIn) {
+  //     next();
+  //   } else {
+  //     next({ name: "home" });
+  //   }
+  // },
+}
+</script>
