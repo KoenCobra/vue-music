@@ -11,14 +11,36 @@ export default {
     }
   },
   async created() {
-    const snapshots = await songsCollection.get()
+    await this.getSongs()
 
-    snapshots.forEach((document) => {
-      this.songs.push({
-        docID: document.id,
-        ...document.data()
+    window.addEventListener('scroll', this.handleScroll)
+  },
+
+  beforeUnmount() {
+    window.removeEventListener('scroll', this.handleScroll)
+  },
+
+  methods: {
+    async getSongs() {
+      const snapshots = await songsCollection.get()
+
+      snapshots.forEach((document) => {
+        this.songs.push({
+          docID: document.id,
+          ...document.data()
+        })
       })
-    })
+    },
+    handleScroll() {
+      const { scrollTop, offsetHeight } = document.documentElement
+      const { innerHeight } = window
+
+      const bottomOfWindow = Math.round(scrollTop) + innerHeight === offsetHeight
+
+      if (bottomOfWindow) {
+        console.log('bottom')
+      }
+    }
   }
 }
 </script>
