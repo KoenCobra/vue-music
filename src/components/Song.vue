@@ -1,5 +1,6 @@
 ﻿<script>
-import { songsCollection } from '@/includes/firebase'
+import { songsCollection, auth, commentsCollection } from '@/includes/firebase'
+import { useUserStore } from '@/stores/userStore'
 
 export default {
   name: 'Song',
@@ -24,11 +25,28 @@ export default {
     this.song = docSnapshot.data()
   },
   methods: {
-    async addComment(values) {
+    useUserStore,
+    async addComment(values, { resetForm }) {
       this.in_submission = true
       this.show_alert = true
       this.alert_variant = 'bg-blue-500'
       this.alert_message = 'Please wait! Updating song info'
+
+      const comment = {
+        content: values.comment,
+        datePosted: new Date().toString(),
+        sid: this.$route.params.id,
+        name: auth.currentUser.displayName,
+        uid: auth.currentUser.uid
+      }
+
+      await commentsCollection.add(comment)
+
+      this.in_submission = false
+      this.alert_variant = 'bg-green-500'
+      this.alert_message = 'Comment added!'
+
+      resetForm()
     }
   }
 }
@@ -69,7 +87,11 @@ export default {
         >
           {{ alert_message }}
         </div>
-        <vee-form :validation-schema="schema" @submit="addComment">
+        <vee-form
+          :validation-schema="schema"
+          @submit="addComment"
+          v-if="useUserStore().userLoggedIn"
+        >
           <vee-field
             as="textarea"
             name="comment"
@@ -80,7 +102,7 @@ export default {
           <button
             :disabled="in_submission"
             type="submit"
-            class="py-1.5 px-3 rounded text-white bg-green-600 block"
+            class="py-1.5 px-3 rounded text-white bg-green-600 block submit-btn"
           >
             Submit
           </button>
