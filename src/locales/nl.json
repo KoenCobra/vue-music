@@ -1,5 +1,11 @@
 ﻿{
   "home": {
     "listen": "Luister naar geweldige muziek!"
+  },
+  "manage": {
+    "mySongs": "Mijn Liedjes"
+  },
+  "header": {
+    "about": "Over"
   }
 }

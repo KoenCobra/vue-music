@@ -33,7 +33,9 @@ export default {
         <ul class="flex flex-row mt-1">
           <!-- Navigation Links -->
           <li>
-            <router-link :to="{ name: 'about' }" class="px-2 text-white">About</router-link>
+            <router-link :to="{ name: 'about' }" class="px-2 text-white">{{
+              $t('header.about')
+            }}</router-link>
           </li>
           <li v-if="!useUserStore().userLoggedIn">
             <a @click.prevent="toggleAuthModal" class="px-2 text-white" href="#"
@@ -49,6 +51,15 @@ export default {
             </li>
           </template>
         </ul>
+        <div class="ml-auto">
+          <!--          <a href="#" class="px-2 text-white" @click.prevent="changeLocale">-->
+          <!--            {{ currentLocale }}-->
+          <!--          </a>-->
+          <select v-model="$i18n.locale">
+            <option value="nl">Nederlands</option>
+            <option value="en">English</option>
+          </select>
+        </div>
       </div>
     </nav>
   </header>
